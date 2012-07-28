@@ -18,20 +18,23 @@ USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
 			0, /* ControlInterfaceNumber */
 			{ /* DataINEndpoint */
 				CDC_TX_EPADDR, /* Address */
-				CDC_TXRX_EPSIZE, /* Size */
+				CPU_TO_LE16(CDC_TXRX_EPSIZE), /* Size */
+				EP_TYPE_CONTROL, /* Endpoint type */
 				1, /* Banks */
 			},
 			{ /* DataOUTEndpoint */
 				CDC_RX_EPADDR, /* Address */
-				CDC_TXRX_EPSIZE, /* Size */
+				CPU_TO_LE16(CDC_TXRX_EPSIZE), /* Size */
+				EP_TYPE_CONTROL, /* Endpoint type */
 				1, /* Banks */
 			},
 			{ /* NotificationEndpoint */
 				CDC_NOTIFICATION_EPADDR, /* Address */
-				CDC_NOTIFICATION_EPSIZE, /* Size */
+				CPU_TO_LE16(CDC_NOTIFICATION_EPSIZE), /* Size */
+				EP_TYPE_CONTROL, /* Endpoint type */
 				1, /* Banks */
-			},
-		},
+			}
+		}
 	};
 
 /** Event handler for the library USB Connection event. */
@@ -47,6 +50,7 @@ void EVENT_USB_Device_Disconnect(void)
 /** Event handler for the library USB Control Request reception event. */
 void EVENT_USB_Device_ControlRequest(void)
 {
+	gpio_set_pin_low(LED);
 	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
 }
 
@@ -59,7 +63,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 int main(void)
 {
 	init_board();
-	gpio_init_pin(LED, GPIO_OUTPUT);
+	gpio_init_pin(LED, GPIO_OUTPUT|GPIO_HIGH);
 
 	/* Set up the USB generic clock. That's f_pll1 / 2 == 48MHz. */
 	pm_init_gclk(GCLK_USBB, GCLK_SOURCE_PLL1, 1);
@@ -74,10 +78,10 @@ int main(void)
 	USB_Init();
 
 	/* All init done, turn the LED on */
-	gpio_set_pin_high(LED);
+	//gpio_set_pin_high(LED);
 
 	for(;;) {
-		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'a');
+		//CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'a');
 		CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
 		USB_USBTask();
 	}
