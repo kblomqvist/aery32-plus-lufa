@@ -65,7 +65,7 @@ CC=avr32-gcc
 CSTANDARD=gnu99
 OPTIMIZATION=-O2 -fdata-sections -ffunction-sections
 
-CPPFLAGS=-mpart=$(MPART) -std=$(CPPSTANDARD) $(OPTIMIZATION) -fno-exceptions -fno-rtti -Wall
+CPPFLAGS=-mpart=$(MPART) -std=$(CPPSTANDARD) $(OPTIMIZATION) -Wall
 CPPFLAGS+=$(addprefix -I,$(INCLUDES))
 CPPFLAGS+=$(LUFA_OPTS)
 
@@ -76,7 +76,7 @@ CFLAGS+=$(LUFA_OPTS)
 LDFLAGS=-mpart=$(MPART) -Taery32/ldscripts/avr32elf_$(MPART).x
 LDFLAGS+=-Wl,--gc-sections
 LDFLAGS+=-Wl,-Map=$(TARGET).map,--cref
-LDFLAGS+=--rodata-writable --direct-data
+#LDFLAGS+=--rodata-writable --direct-data
 
 # Linker relaxing - if gcc is used as a frontend for the linker, this option
 # is automaticly passed to the linker when using -O2 or -O3 (AVR32006 p. 4)
@@ -122,7 +122,7 @@ aery32/libaery32_$(MPART).a:
 	$(MAKE) -C aery32 MPART="$(MPART)" OPTIMIZATION="$(OPTIMIZATION)"
 
 liblufa.a:
-	$(MAKE) -f lufa.mk MPART=$(MPART) LUFA_OPTS="$(LUFA_OPTS)" LUFA_PATH="LUFA"
+	$(MAKE) -f lufa.mk MPART=$(MPART) LUFA_OPTS="$(LUFA_OPTS)" LUFA_PATH="LUFA" OPTIMIZATION="0"
 
 $(TARGET).lst: $(TARGET).elf
 	avr32-objdump -h -S $< > $@

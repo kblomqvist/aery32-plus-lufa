@@ -50,7 +50,6 @@ void EVENT_USB_Device_Disconnect(void)
 /** Event handler for the library USB Control Request reception event. */
 void EVENT_USB_Device_ControlRequest(void)
 {
-	gpio_set_pin_low(LED);
 	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
 }
 
@@ -78,10 +77,17 @@ int main(void)
 	USB_Init();
 
 	/* All init done, turn the LED on */
-	//gpio_set_pin_high(LED);
+	gpio_set_pin_high(LED);
 
 	for(;;) {
-		//CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'a');
+		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'H');
+		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'e');
+		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'l');
+		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'l');
+		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'o');
+		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, '\n');
+		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, '\r');
+
 		CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
 		USB_USBTask();
 	}
