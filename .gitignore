@@ -6,5 +6,7 @@
 *~
 *.sublime-workspace
 liblufa.a
+*.o
+*.d
 
 obj

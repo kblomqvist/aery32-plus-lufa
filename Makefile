@@ -41,7 +41,7 @@ TARGET=lufaery32
 MPART=uc3a1128
 
 # Project's .cpp source files, grab all under the project root
-SOURCES=$(wildcard *.cpp) descriptors.c
+SOURCES=$(wildcard *.cpp) Descriptors.c
 
 # Additional include paths
 INCLUDES=aery32 .
