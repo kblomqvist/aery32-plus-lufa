@@ -4,8 +4,8 @@ BOARD        = NONE
 F_CPU        = 66000000
 F_USB        = 96000000
 C_STANDARD   = gnu99
-OPTIMIZATION = s
-LUFA_OPTS    = -DUSE_LUFA_CONFIG_HEADER -IConfig
+OPTIMIZATION = 2
+LUFA_DEFS    = -DUSE_LUFA_CONFIG_HEADER -IConfig
                -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) \
                -DF_CPU=$(F_CPU)UL -DF_USB=$(F_USB)UL
 
@@ -25,7 +25,7 @@ CFLAGS = -mpart=$(MPART) -x c -O$(OPTIMIZATION) -std=$(C_STANDARD) \
          -Wall -fno-strict-aliasing -funsigned-char \
          -funsigned-bitfields -ffunction-sections
 
-CFLAGS += $(LUFA_OPTS)
+CFLAGS += $(LUFA_DEFS)
 ASFLAGS = -mpart=$(MPART)
 
 liblufa.a: $(OBJECTS)
