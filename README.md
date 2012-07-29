@@ -24,3 +24,7 @@
 ## Licenses
 
 Read LICENSE.md
+
+## Acknowledgements
+
+Thanks for [thewizzy](https://github.com/thewizzy) for tireless testing.
