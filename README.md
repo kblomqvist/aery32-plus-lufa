@@ -27,4 +27,4 @@ Read LICENSE.md
 
 ## Acknowledgements
 
-Thanks for [thewizzy](https://github.com/thewizzy) for tireless testing.
+Thanks to [abcminiuser](https://github.com/abcminiuser) (the LUFA creator) for commenting the issues and [thewizzy](https://github.com/thewizzy) for tireless testing.
