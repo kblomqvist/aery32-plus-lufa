@@ -24,7 +24,7 @@ CC = avr32-gcc
 CFLAGS = -mpart=$(MPART) -x c $(COPT) -std=$(C_STANDARD) \
          -Wstrict-prototypes -masm-addr-pseudos \
          -Wall -fno-strict-aliasing -funsigned-char \
-         -funsigned-bitfields -ffunction-sections
+         -funsigned-bitfields
 CFLAGS += $(LUFA_DEFS)
 
 ASFLAGS = -mpart=$(MPART)
