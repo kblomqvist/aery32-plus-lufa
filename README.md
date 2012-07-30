@@ -4,7 +4,7 @@
 
 ## Quick Start
 
-### Step 1. Decide where to work
+### Step 1. Decide the directory where to work at
 
     cd workspace
 
