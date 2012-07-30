@@ -29,7 +29,6 @@ Aery32 Software Framework and its library is licensed under the new BSD license:
 > SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-
 LUFA Library
 
 > Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
