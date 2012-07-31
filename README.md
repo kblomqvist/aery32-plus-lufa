@@ -6,20 +6,20 @@
 
 ### Step 1. Decide the directory where to work at
 
-    cd workspace
+    $ cd workspace
 
 ### Step 2. Git clone Aery32+LUFA GitHub repo
 
-    git clone git://github.com/kblomqvist/aery32-plus-lufa.git
-    cd aery32-plus-lufa
+    $ git clone git://github.com/kblomqvist/aery32-plus-lufa.git
+    $ cd aery32-plus-lufa
 
 ### Step 3. Compile
 
-    make
+    $ make
 
 ### Step 4. Upload `.hex` to your board
 
-    make programs
+    $ make programs
 
 ## Licenses
 
