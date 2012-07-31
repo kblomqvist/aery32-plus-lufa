@@ -29,31 +29,31 @@
 */
 
 /** \file
- *  \brief Board specific LED driver header for the Bitwizard Multio.
- *  \copydetails Group_LEDs_MULTIO
+ *  \brief Board specific LED driver header for the Olimex AVR-ISP-MK2 Development Board.
+ *  \copydetails Group_LEDs_OLIMEXISPMK2
  *
  *  \note This file should not be included directly. It is automatically included as needed by the LEDs driver
  *        dispatch header located in LUFA/Drivers/Board/LEDs.h.
  */
 
 /** \ingroup Group_LEDs
- *  \defgroup Group_LEDs_MULTIO MULTIO
- *  \brief Board specific LED driver header for the Bitwizard Multio.
+ *  \defgroup Group_LEDs_OLIMEXISPMK2 OLIMEXISPMK2
+ *  \brief Board specific LED driver header for the Olimex AVR-ISP-MK2.
  *
- *  Board specific LED driver header for the Bitwizard Multio (http://www.bitwizard.nl/wiki/index.php/USB-multio).
+ *  Board specific LED driver header for the Olimex AVR-ISP-MK2 Development Board (https://www.olimex.com/dev/avr-isp-mk2.html).
  *
  *  <table>
  *    <tr><th>Name</th><th>Color</th><th>Info</th><th>Active Level</th><th>Port Pin</th></tr>
- *    <tr><td>LEDS_LED1</td><td>Green</td><td>General Indicator</td><td>High</td><td>PORTD.0</td></tr>
- *    <tr><td>LEDS_LED2</td><td>Green</td><td>General Indicator</td><td>High</td><td>PORTC.2</td></tr>
- *    <tr><td>LEDS_LED3</td><td>Green</td><td>General Indicator</td><td>High</td><td>PORTD.7</td></tr>
+ *    <tr><td>LEDS_LED1</td><td>Yellow</td><td>Target Power</td><td>High</td><td>PORTB.5</td></tr>
+ *    <tr><td>LEDS_LED2</td><td>Red</td><td>Activity</td><td>High</td><td>PORTB.6</td></tr>
+ *    <tr><td>LEDS_LED3</td><td>Green</td><td>Ready</td><td>High</td><td>PORTB.7</td></tr>
  *  </table>
  *
  *  @{
  */
 
-#ifndef __LEDS_MULTIO_H__
-#define __LEDS_MULTIO_H__
+#ifndef __LEDS_OLIMEXISPMK2_H__
+#define __LEDS_OLIMEXISPMK2_H__
 
 	/* Includes: */
 		#include "../../../../Common/Common.h"
@@ -67,25 +67,18 @@
 		#if !defined(__INCLUDE_FROM_LEDS_H)
 			#error Do not include this file directly. Include LUFA/Drivers/Board/LEDS.h instead.
 		#endif
-
-	/* Private Interface - For use in library only: */
-	#if !defined(__DOXYGEN__)
-		/* Macros: */
-			#define LEDS_PORTD_LEDS       (LEDS_LED1 | LEDS_LED3)
-			#define LEDS_PORTC_LEDS       LEDS_LED2
-	#endif
-
+	
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** LED mask for the first LED on the board. */
-			#define LEDS_LED1        (1 << 0)
+			#define LEDS_LED1        (1 << 5)
 
 			/** LED mask for the second LED on the board. */
-			#define LEDS_LED2        (1 << 2)
+			#define LEDS_LED2        (1 << 6)
 
-			/** LED mask for the second LED on the board. */
+			/** LED mask for the third LED on the board. */
 			#define LEDS_LED3        (1 << 7)
-
+			
 			/** LED mask for all the LEDs on the board. */
 			#define LEDS_ALL_LEDS    (LEDS_LED1 | LEDS_LED2 | LEDS_LED3)
 
@@ -96,57 +89,46 @@
 		#if !defined(__DOXYGEN__)
 			static inline void LEDs_Init(void)
 			{
-				DDRD  |=  LEDS_PORTD_LEDS;
-				DDRC  |=  LEDS_PORTC_LEDS;
-			
-				PORTD &= ~LEDS_PORTD_LEDS;
-				PORTC &= ~LEDS_PORTC_LEDS;
+				DDRB  |=  LEDS_ALL_LEDS;
+				PORTB &= ~LEDS_ALL_LEDS;
 			}
 
 			static inline void LEDs_Disable(void)
 			{
-				DDRD  &= ~LEDS_PORTD_LEDS;
-				DDRC  &= ~LEDS_PORTC_LEDS;
-			
-				PORTD &= ~LEDS_PORTD_LEDS;
-				PORTC &= ~LEDS_PORTC_LEDS;
+				DDRB  &= ~LEDS_ALL_LEDS;
+				PORTB &= ~LEDS_ALL_LEDS;
 			}
 
 			static inline void LEDs_TurnOnLEDs(const uint8_t LEDMask)
 			{
-				PORTD |= (LEDMask & LEDS_PORTD_LEDS);
-				PORTC |= (LEDMask & LEDS_PORTC_LEDS);
+				PORTB |= LEDMask;
 			}
 
 			static inline void LEDs_TurnOffLEDs(const uint8_t LEDMask)
 			{
-				PORTD &= ~(LEDMask & LEDS_PORTD_LEDS);
-				PORTC &= ~(LEDMask & LEDS_PORTC_LEDS);
+				PORTB &= ~LEDMask;
 			}
 
 			static inline void LEDs_SetAllLEDs(const uint8_t LEDMask)
 			{
-				PORTD = (PORTD & ~LEDS_PORTD_LEDS) | (LEDMask & LEDS_PORTD_LEDS);
-				PORTC = (PORTC & ~LEDS_PORTC_LEDS) | (LEDMask & LEDS_PORTC_LEDS);
+				PORTB = ((PORTB & ~LEDS_ALL_LEDS) | LEDMask);
 			}
 
 			static inline void LEDs_ChangeLEDs(const uint8_t LEDMask,
 			                                   const uint8_t ActiveMask)
 			{
-				PORTD = (PORTD & ~(LEDMask & LEDS_PORTD_LEDS)) | (ActiveMask & LEDS_PORTD_LEDS);
-				PORTC = (PORTC & ~(LEDMask & LEDS_PORTC_LEDS)) | (ActiveMask & LEDS_PORTC_LEDS);
+				PORTB = ((PORTB & ~LEDMask) | ActiveMask);
 			}
 
 			static inline void LEDs_ToggleLEDs(const uint8_t LEDMask)
 			{
-				PIND  = (LEDMask & LEDS_PORTD_LEDS);
-				PINC  = (LEDMask & LEDS_PORTC_LEDS);
+				PINB  = LEDMask;
 			}
 
 			static inline uint8_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t LEDs_GetLEDs(void)
 			{
-				return ((PORTD & LEDS_PORTD_LEDS) | (PORTC & LEDS_PORTC_LEDS));
+				return (PORTB & LEDS_ALL_LEDS);
 			}
 		#endif
 
