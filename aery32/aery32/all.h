@@ -36,13 +36,14 @@
 
 #include "aery32/adc.h"
 #include "aery32/delay.h"
+#include "aery32/flashc.h"
 #include "aery32/gpio.h"
 #include "aery32/intc.h"
 #include "aery32/pm.h"
+#include "aery32/pwm.h"
 #include "aery32/rtc.h"
 #include "aery32/spi.h"
 
-#include "aery32/extio.h"
-#include "aery32/n2str.h"
+#include "aery32/string.h"
 
 #endif

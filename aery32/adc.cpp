@@ -20,6 +20,7 @@
 #include "aery32/pm.h"
 
 volatile avr32_adc_t *aery::adc = &AVR32_ADC;
+volatile uint32_t aery::__adc_lsr = AVR32_ADC.sr;
 
 int aery::adc_init(uint8_t prescal, bool hires, uint8_t shtime,
 		uint8_t startup)
@@ -58,30 +59,9 @@ void aery::adc_setup_trigger(enum Adc_trigger trigger)
 	AVR32_ADC.MR.trgsel = trigger;
 }
 
-void aery::adc_enable(uint8_t chamask)
-{
-	AVR32_ADC.cher = chamask;
-}
-
-void aery::adc_disable(uint8_t chamask)
-{
-	AVR32_ADC.chdr = chamask;
-}
-
 void aery::adc_start_cnv(void)
 {
 	AVR32_ADC.CR.start = true;
-}
-
-int aery::adc_isbusy(uint8_t chamask)
-{
-	if (chamask == 0 && AVR32_ADC.chsr == 0)
-		return -1;
-	else if ((AVR32_ADC.chsr & chamask) != chamask)
-		return -1;
-	if (chamask == 0)
-		return AVR32_ADC.SR.drdy == 0;
-	return (AVR32_ADC.sr & chamask) == chamask;
 }
 
 uint16_t aery::adc_read_cnv(uint8_t chanum)
@@ -92,4 +72,34 @@ uint16_t aery::adc_read_cnv(uint8_t chanum)
 uint16_t aery::adc_read_lastcnv(void)
 {
 	return AVR32_ADC.lcdr;
+}
+
+void aery::adc_enable(uint8_t chamask)
+{
+	AVR32_ADC.cher = chamask;
+}
+
+void aery::adc_disable(uint8_t chamask)
+{
+	AVR32_ADC.chdr = chamask;
+}
+
+int aery::adc_isbusy(uint8_t chamask)
+{
+	using namespace aery;
+
+	__adc_lsr = AVR32_ADC.sr;
+	if (AVR32_ADC.chsr == 0 || (AVR32_ADC.chsr & chamask) != chamask)
+		return -1;
+	if (chamask == 0)
+		return (__adc_lsr & AVR32_ADC_SR_DRDY_MASK) == 0;
+	return (__adc_lsr & chamask) == chamask;
+}
+
+bool adc_hasoverrun(uint8_t chamask)
+{
+	using namespace aery;
+	if (chamask == 0)
+		return (__adc_lsr & AVR32_ADC_GOVRE_MASK);
+	return (__adc_lsr & (chamask << AVR32_ADC_OVRE0_OFFSET));
 }

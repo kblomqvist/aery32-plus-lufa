@@ -116,7 +116,7 @@ $(TARGET).hex: $(TARGET).elf
 	avr32-objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature $< $@
 
 aery32/libaery32_$(MPART).a:
-	"$(MAKE)" -C aery32 MPART="$(MPART)" OPTIMIZATION="$(CXXOPT)"
+	"$(MAKE)" -C aery32 MPART="$(MPART)" CXXOPT="$(CXXOPT)"
 
 liblufa.a:
 	"$(MAKE)" -f lufa.mk MPART=$(MPART) LUFA_DEFS="$(LUFA_DEFS)" LUFA_PATH="LUFA" COPT="$(COPT)"
@@ -166,7 +166,7 @@ dump-fuses: $(PROGRAMMER)-dump-fuses
 # Chip programming targets for batchisp/batchisp (Windows)
 # ----------------------------------------------------------------------
 .PHONY: batchisp-program batchisp-start batchisp-programs \
-		batchisp-dump-userdata batchisp-dump-fuses batchisp-program-user 
+	batchisp-dump-userdata batchisp-dump-fuses batchisp-program-user 
 
 BATCHISP=batchisp -device at32$(MPART) -hardware usb
 
