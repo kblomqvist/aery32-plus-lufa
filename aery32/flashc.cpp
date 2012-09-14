@@ -19,8 +19,10 @@
 #include <cstring>
 #include "aery32/flashc.h"
 
-volatile avr32_flashc_t *aery::flashc = &AVR32_FLASHC;
-volatile uint32_t aery::__flashc_lsr = AVR32_FLASHC.fsr;
+namespace aery {
+	volatile avr32_flashc_t *flashc = &AVR32_FLASHC;
+	volatile uint32_t __flashc_lsr = AVR32_FLASHC.fsr;
+}
 
 static void *memcpy32(void *dest, const void *src, size_t count)
 {
@@ -98,8 +100,8 @@ int aery::flashc_save_page(uint16_t page, const void *src)
 
 	memcpy32(dest, src, 128);              /* Fill page buffer */
 	flashc_instruct(page, FLASH_CMD_WP);   /* Write page */
-
 	while (flashc_isbusy());
+
 	if (__flashc_lsr & AVR32_FLASHC_FSR_LOCKE_MASK)
 		return EFLASH_PAGE_LOCKED;
 	if (__flashc_lsr & AVR32_FLASHC_FSR_PROGE_MASK)
