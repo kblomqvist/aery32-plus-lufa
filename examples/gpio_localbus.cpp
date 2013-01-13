@@ -1,18 +1,10 @@
 #include "board.h"
-#include <aery32/all.h>
-
 using namespace aery;
 
 int main(void)
 {
-	/*
-	 * Put your application initialization sequence here. The default
-	 * board_init() setups the LED pin and the CPU clock (66 MHz).
-	 */
-	init_board();
+	board::init();
 	gpio_init_pin(AVR32_PIN_PA17, GPIO_OUTPUT);
-
-	/* All done. Turn the LED on. */
 	gpio_set_pin_high(LED);
 
 	gpio_enable_localbus();

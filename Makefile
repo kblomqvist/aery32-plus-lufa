@@ -43,11 +43,30 @@ MPART=uc3a1128
 # Project's source files. Grab all under the project root.
 SOURCES=$(wildcard *.cpp) $(wildcard *.c)
 
+# Global project wide settings file. IMPORTANT! Define with absolute path.
+SETTINGS=$(CURDIR)/settings.h
+
 # Additional include paths
 INCLUDES=aery32 .
 
-# Where to put .o object files
-OBJDIR=obj
+
+# ----------------------------------------------------------------------
+# Some stuff that has to be done
+# ----------------------------------------------------------------------
+
+# Grab the name of the Operating System
+OS=$(shell uname)
+
+# Resolve object files from source files
+OBJECTS=$(SOURCES:.cpp=.o)
+OBJECTS:=$(OBJECTS:.c=.o)
+
+# Escape possible space characters in settings path. Needed in Linux.
+ifeq (, $(filter $(OS), windows32))
+sp:=
+sp+=
+SETTINGS:=$(subst $(sp),\ ,$(SETTINGS))
+endif
 
 # LUFA definitions
 LUFA_DEFS=-DUSE_LUFA_CONFIG_HEADER -IConfig\
@@ -69,11 +88,12 @@ COPT=-O2 -fdata-sections -ffunction-sections
 CXXOPT=$(COPT) -fno-exceptions -fno-rtti
 
 CFLAGS=-mpart=$(MPART) -std=$(CSTANDARD) $(COPT) -Wall
-CFLAGS+=$(addprefix -I,$(INCLUDES))
+CFLAGS+=$(addprefix -I,$(INCLUDES)) -include $(SETTINGS)
 CFLAGS+=$(LUFA_DEFS)
 
 CXXFLAGS=-mpart=$(MPART) -std=$(CXXSTANDARD) $(CXXOPT) -Wall
 CXXFLAGS+=$(addprefix -I,$(INCLUDES))
+CXXFLAGS+=-include "$(SETTINGS)"
 CXXFLAGS+=$(LUFA_DEFS)
 
 LDFLAGS=-mpart=$(MPART) -Taery32/ldscripts/avr32elf_$(MPART).x
@@ -90,24 +110,10 @@ LDFLAGS+=-Wl,-Map=$(TARGET).map,--cref
 # Build targets
 # ----------------------------------------------------------------------
 
-# Grab the name of the Operating System
-OS=$(shell uname)
-
-# Resolve object files from source files
-OBJECTS=$(SOURCES:.cpp=.o)
-OBJECTS:=$(OBJECTS:.c=.o)
-
-# Append object files with $(OBJDIR)
-OBJECTS:=$(addprefix $(OBJDIR)/,$(OBJECTS))
-
-# Resolve the nested object directories that has to be created
-OBJDIRS=$(sort $(dir $(OBJECTS)))
-OBJDIRS:=$(filter-out ./,$(OBJDIRS)) # Filter the root dir out, that's "./"
-
 .PHONY: all
 all: $(TARGET).hex $(TARGET).lst
 	@echo Program size:
-	@make -s size
+	@$(MAKE) -s size
 
 $(TARGET).elf: $(OBJECTS) aery32/libaery32_$(MPART).a liblufa.a
 	$(CXX) $(LDFLAGS) $^ -lm   -o $@
@@ -116,28 +122,19 @@ $(TARGET).hex: $(TARGET).elf
 	avr32-objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature $< $@
 
 aery32/libaery32_$(MPART).a:
-	"$(MAKE)" -C aery32 MPART="$(MPART)" CXXOPT="$(CXXOPT)"
+	"$(MAKE)" -C aery32 MPART="$(MPART)" CXXOPT="$(CXXOPT)" SETTINGS="$(SETTINGS)"
 
 liblufa.a:
 	"$(MAKE)" -f lufa.mk MPART=$(MPART) LUFA_DEFS="$(LUFA_DEFS)" LUFA_PATH="LUFA" COPT="$(COPT)"
 
-$(OBJDIR)/%.o: %.cpp
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -MMD -MP -MF $(@:%.o=%.d) $<   -c -o $@
 
-$(OBJDIR)/%.o: %.c
+%.o: %.c
 	$(CC) $(CFLAGS) -MMD -MP -MF $(@:%.o=%.d) $<   -c -o $@
 
 $(TARGET).lst: $(TARGET).elf
 	avr32-objdump -h -S $< > $@
-
-# Create directories where to place object files
-$(OBJECTS): | $(OBJDIRS)
-$(OBJDIRS):
-ifneq (, $(filter $(OS), windows32))
-	-mkdir $(subst /,\,$@)
-else
-	-mkdir -p $@
-endif
 
 # Add dependency lists, .d files
 -include $(OBJECTS:.o=.d)
@@ -226,8 +223,8 @@ size: $(TARGET).elf $(TARGET).hex
 	avr32-size -B $^
 
 clean:
-	-rm -f $(addprefix $(TARGET),.elf .hex .lst .map) userpage.hex fusebits.hex
-	-rm -rf $(OBJDIR)
+	-rm -f $(addprefix $(TARGET),.elf .hex .lst .map)
+	-rm -f $(OBJECTS) $(OBJECTS:.o=.d)
 
 cleanall: clean
 	-"$(MAKE)" -C aery32 clean
@@ -238,8 +235,9 @@ re: clean all
 reall: cleanall all
 
 debug: reall
-debug: COPT+=-g3 -DDEBUG
+debug: COPT+=-g -O0 -DDEBUG
+debug: LDFLAGS+=-mrelax
 
 qa: re
-qa: CFLAGS+=-pedantic -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Winline
-qa: CXXFLAGS+=-pedantic -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Winline
+qa: CFLAGS+=-pedantic -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Winline -Wextra
+qa: CXXFLAGS+=-pedantic -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Winline -Wextra

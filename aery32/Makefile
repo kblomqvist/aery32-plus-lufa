@@ -39,8 +39,11 @@ MPART=uc3a1128
 
 # Source files
 SOURCES=adc.cpp flashc.cpp gpio.cpp intc.cpp pm.cpp pwm.cpp \
-        rtc.cpp spi.cpp string.cpp twi.cpp
+        rtc.cpp spi.cpp string.cpp twi.cpp usart.cpp devnull.cpp
 #SOURCES+=exception.S
+
+# Default settings. Generally given externally through make.
+SETTINGS=settings.h
 
 
 # ----------------------------------------------------------------------
@@ -52,7 +55,7 @@ CXXSTANDARD=gnu++98
 CXXOPT=-O2 -fdata-sections -ffunction-sections -fno-exceptions -fno-rtti
 
 CXXFLAGS=-mpart=$(MPART) -std=$(CXXSTANDARD) $(CXXOPT) -Wall
-#CXXFLAGS+=-DF_OSC0=12000000UL -DF_OSC1=16000000UL
+CXXFLAGS+=-include "$(SETTINGS)"
 
 ASFLAGS=-mpart=$(MPART)
 
@@ -84,7 +87,7 @@ libaery32_$(MPART).a: $(OBJECTS)
 # ----------------------------------------------------------------------
 # Other supportive tasks
 # ----------------------------------------------------------------------
-.PHONY: clean re debug qa size
+.PHONY: clean re qa size
 
 clean:
 	-rm -f *.o *.a *.d

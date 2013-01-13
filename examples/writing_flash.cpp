@@ -1,7 +1,4 @@
-#include <cstring>
 #include "board.h"
-#include <aery32/all.h>
-
 using namespace aery;
 
 int main(void)
@@ -10,7 +7,7 @@ int main(void)
 	uint16_t page = FLASH_LAST_PAGE;
 	char buf[512] = {'\0'};
 
-	init_board();
+	board::init();
 	gpio_init_pin(LED, GPIO_OUTPUT);
 
 	/* If page is empty, write "foo". Else read the page. */

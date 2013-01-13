@@ -1,5 +1,4 @@
 #include "board.h"
-#include <aery32/all.h>
 
 #include <LUFA/Common/Common.h>
 #include <LUFA/Drivers/USB/USB.h>
@@ -61,8 +60,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 
 int main(void)
 {
-	init_board();
-	gpio_init_pin(LED, GPIO_OUTPUT|GPIO_HIGH);
+	board::init();
 
 	/* Set up the USB generic clock. That's f_pll1 / 2 == 48MHz. */
 	pm_init_gclk(GCLK_USBB, GCLK_SOURCE_PLL1, 1);

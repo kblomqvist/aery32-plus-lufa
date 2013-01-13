@@ -36,8 +36,11 @@ extern "C" {
 	#include <avr32/io.h>
 }
 
+extern int __builtin_mfsr(int reg);
+extern void __builtin_mtsr(int reg, int val);
+
 #ifndef F_CPU
-#error "F_CPU NOT DEFINED: Delay functions cannot be defined without the knowledge of the CPU frequency."
+#error "F_CPU Not Defined: Define your CPU frequency (F_CPU) in settings.h and provide it through -include option."
 #endif
 
 namespace aery {
