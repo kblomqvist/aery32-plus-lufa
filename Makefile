@@ -49,6 +49,11 @@ SETTINGS=$(CURDIR)/settings.h
 # Additional include paths
 INCLUDES=aery32 .
 
+# LUFA definitions
+LUFA_DEFS=-DUSE_LUFA_CONFIG_HEADER -IConfig\
+          -DARCH=ARCH_UC3 -DBOARD=BOARD_NONE\
+          -DF_CPU=66000000UL -DF_USB=96000000UL
+
 
 # ----------------------------------------------------------------------
 # Some stuff that has to be done
@@ -67,11 +72,6 @@ sp:=
 sp+=
 SETTINGS:=$(subst $(sp),\ ,$(SETTINGS))
 endif
-
-# LUFA definitions
-LUFA_DEFS=-DUSE_LUFA_CONFIG_HEADER -IConfig\
-          -DARCH=ARCH_UC3 -DBOARD=BOARD_NONE\
-          -DF_CPU=66000000UL -DF_USB=96000000UL
 
 
 # ----------------------------------------------------------------------
